@@ -1584,7 +1584,7 @@ class GraphicsRenderer(Logger):
                             how='left',
                             on='surface')],
                         axis=1)
-                    tmp_df['case'] = case
+                    tmp_df['cases'] = case
                     tmp_df['software'] = json_obj['identifying_information']['software_name']
                     tmp_df['version'] = json_obj['identifying_information']['software_version']
                     tmp_df['value'] = (tmp_df['kWh/m2'] / tmp_df['kWh/m2_incident']).round(3)
@@ -1592,12 +1592,43 @@ class GraphicsRenderer(Logger):
                     import traceback
                     print(traceback.print_exc())
                     tmp_df['value'] = float('NaN')
-                    tmp_df['case'] = case
+                    tmp_df['cases'] = case
                     tmp_df['software'] = json_obj['identifying_information']['software_name']
                     tmp_df['version'] = json_obj['identifying_information']['software_version']
                 df = pd.concat([df, tmp_df], axis=0)
-        df.drop(columns=['surface', 'kWh/m2', 'kWh/m2_incident'], inplace=True)
+        df.drop(columns=['surface', 'kWh/m2', 'kWh/m2_incident', 'version'], inplace=True)
+        df = df.set_index(['cases', 'software'])
+        df = df.unstack(level=1)
+        df.columns = df.columns.droplevel(level=0)
+        df = df.reset_index()
+        # reorder columns so test program is last
+        column_names = [i for i in df.columns if i != self.model_name] + [
+            i for i in df.columns if i == self.model_name]
+        df.columns = column_names
+        # make list of program names
+        df_formatted_name_table = df[['cases']] \
+            .merge(
+            self.case_detailed_df,
+            how='left',
+            left_on=['cases', ],
+            right_index=True) \
+            .sort_values(['case_order']) \
+            .drop(['cases', 'case_order'], axis=1) \
+            .rename(columns={
+            'case_name': 'Case'})
+        # make stats df
+        df_stats = pd.DataFrame()
+        program_rgx = re.compile(r'(^[a-zA-Z]+)')
+        df.columns = [
+            program_rgx.search(i).group(1) if program_rgx.search(i) else i for i in df.columns]
+        base_ratio_cols = [i for i in df.columns if any([j.startswith(i.lower()) for j in self.baseline_model_names])]
+        df_stats['min'] = df[base_ratio_cols].min(axis=1).round(2)
+        df_stats['max'] = df[base_ratio_cols].max(axis=1).round(2)
+        df_stats['mean'] = df[base_ratio_cols].mean(axis=1).round(2)
+        df_stats['(max - min)\n/ mean %'] = df[base_ratio_cols].min(axis=1).round(2)
         print(df)
+        print(df_formatted_name_table)
+        print(df_stats)
         return
 
     def render_section_5_2a_figure_b8_1(self):
