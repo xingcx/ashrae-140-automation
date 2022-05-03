@@ -93,7 +93,6 @@ class InputProcessor(Logger):
 #                 '.'.join(['-'.join([section, ]), 'json']))
             output_file_location = program_directory.joinpath(
                 '.'.join(['-'.join([section, ]), 'json']))
-    
             print('output file location: ', output_file_location)
             print('program directory: ', program_directory)
             print('root directory: ', root_directory)
