@@ -92,6 +92,7 @@ class InputProcessor(Logger):
                 program_directory,
                 '.'.join(['-'.join([section, ]), 'json']))
             print('output file location: ', output_file_location)
+            self.logger.info('Output file location {}'.format(output_file_location))
             with open(output_file_location, 'w') as f:
                 json.dump(data_object.test_data, f, indent=4, sort_keys=True)
         return output_file_location
