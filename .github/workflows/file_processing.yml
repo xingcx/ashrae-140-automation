@@ -42,19 +42,19 @@ jobs:
           echo "DOCOMMIT=false" >> $GITHUB_ENV
           for file in ${{ steps.changed-files.outputs.all_modified_files }}; do
             if [[  ${file} =~ ^input/ ]]; then
-              python3 src/main.py -l -rg INFO ${file}
+              python3 src/main.py -l INFO ${file}
               echo "DOCOMMIT=true" >> $GITHUB_ENV
             fi
           done
 
-#       - name: commit results
-#         id: commit-results
-#         if: env.DOCOMMIT == 'true'
-#         run: |
-#           git config --global user.name 'Processing-Bot'
-#           git config --global user.email 'processing-bot@users.noreply.github.com'
-#           git commit --allow-empty -am "Automated processing"
-#           git push
+      - name: commit results
+        id: commit-results
+        if: env.DOCOMMIT == 'true'
+        run: |
+          git config --global user.name 'Processing-Bot'
+          git config --global user.email 'processing-bot@users.noreply.github.com'
+          git commit --allow-empty -am "Automated processing"
+          git push
   render:
     needs: process
     runs-on: ubuntu-latest  # windows-latest | macos-latest
