@@ -88,9 +88,16 @@ class InputProcessor(Logger):
                 version
             )
             pathlib.Path(program_directory).mkdir(parents=True, exist_ok=True)
-            output_file_location = root_directory.joinpath(
-                program_directory,
+#             output_file_location = root_directory.joinpath(
+#                 program_directory,
+#                 '.'.join(['-'.join([section, ]), 'json']))
+            output_file_location = program_directory.joinpath(
                 '.'.join(['-'.join([section, ]), 'json']))
+            print('output file location: ', output_file_location)
+            print('program directory: ', program_directory)
+            print('root directory: ', root_directory)
+            self.logger.info('Output file location {}'.format(output_file_location))
             with open(output_file_location, 'w') as f:
+                print(data_object.test_data)
                 json.dump(data_object.test_data, f, indent=4, sort_keys=True)
         return output_file_location

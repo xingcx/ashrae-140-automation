@@ -147,6 +147,7 @@ def main(args=None):
                         if ip.input_file_location:
                             ip.logger.info('Processing file: {}'.format(ip.input_file_location))
                             output_file = ip.run()
+                            print('output file: ', output_file)
                             if render_from_input:
                                 processed_files.append(output_file)
                     except ASHRAE140TypeError:
