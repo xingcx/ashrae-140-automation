@@ -220,7 +220,8 @@ def main(args=None):
                 'va114-2.20'
             ]:
                 create_images(input_file=input_file, args=args, logger_name=logger_name)
-        create_markdown(input_file=f)
+        if 'processed' in f:
+            create_markdown(input_file=f)
     return
 
 
