@@ -108,6 +108,49 @@ def create_images(input_file, args, logger_name):
         return
     return
 
+def create_markdown(input_file, destination_directory=root_directory.joinpath('rendered', 'images')):
+    folder_path_str = '/'.join(str(input_file).split(str(root_directory))[1].split('processed')[1].split('/')[:-1])
+    markdown_path_str = str(destination_directory) + folder_path_str + '/'
+    all_img_path = pathlib.Path(markdown_path_str + 'images')
+
+    if pathlib.Path(all_img_path).exists():
+        if pathlib.Path(all_img_path).is_dir():
+            img_files = [i.name for i in all_img_path.glob('*') if i.is_file() and i.suffix == '.png']
+        else:
+            img_files = [f, ]
+    else:
+        img_files = []
+
+    img_files.sort(key = lambda x: int(re.split('(\d.*)', x.split('_')[-1].split('.png')[0])[1]))
+
+    sorted_files = []
+    # get all tables
+    for img in img_files:
+        if 'table' in img: # get all tables
+            sorted_files.append(img)
+    for img in img_files:
+        if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == '':
+            sorted_files.append(img)
+    for img in img_files:
+        if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == 'h':
+            sorted_files.append(img)
+    for img in img_files:
+        if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == 'm':
+            sorted_files.append(img)
+
+    md_file = open(markdown_path_str + 'section_5_2a.md', 'w')
+    md_file.write('# Section 5-2A  \n')
+
+    for png in sorted_files:
+        idx = png.split('_')[-1].split('.png')[0]
+        if 'table' in png:
+            line = '![table ' + str(idx) + '](images/' + png + ')'
+            md_file.write(line + '\n')
+        if 'figure' in png: 
+            line = '![figure ' + str(idx) + '](images/' + png + ')'
+            md_file.write(line + '\n')
+
+    md_file.close()
 
 def main(args=None):
     if hasattr(args, 'version') and args.version:
@@ -175,6 +218,7 @@ def main(args=None):
                 'va114-2.20'
             ]:
                 create_images(input_file=input_file, args=args, logger_name=logger_name)
+        create_markdown(input_file=f)
     return
 
 
