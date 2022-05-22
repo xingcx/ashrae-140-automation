@@ -122,7 +122,7 @@ def create_markdown(input_file, destination_directory=root_directory.joinpath('r
     else:
         img_files = []
 
-    img_files.sort(key=lambda x: int(re.split('(\d.*)', x.split('_')[-1].split('.png')[0])[1]))
+    img_files.sort(key=lambda x: int(re.split(r'(\d.*)', x.split('_')[-1].split('.png')[0])[1]))
 
     sorted_files = []
     # get all tables
@@ -130,13 +130,13 @@ def create_markdown(input_file, destination_directory=root_directory.joinpath('r
         if 'table' in img:
             sorted_files.append(img)
     for img in img_files:
-        if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == '':
+        if 'figure' in img and re.split(r'(\d.*)', img.split('_')[-1].split('.png')[0])[0] == '':
             sorted_files.append(img)
     for img in img_files:
-        if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == 'h':
+        if 'figure' in img and re.split(r'(\d.*)', img.split('_')[-1].split('.png')[0])[0] == 'h':
             sorted_files.append(img)
     for img in img_files:
-        if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == 'm':
+        if 'figure' in img and re.split(r'(\d.*)', img.split('_')[-1].split('.png')[0])[0] == 'm':
             sorted_files.append(img)
 
     md_file = open(markdown_path_str + 'section_5_2a.md', 'w')
