@@ -108,6 +108,7 @@ def create_images(input_file, args, logger_name):
         return
     return
 
+
 def create_markdown(input_file, destination_directory=root_directory.joinpath('rendered', 'images')):
     folder_path_str = '/'.join(str(input_file).split(str(root_directory))[1].split('processed')[1].split('/')[:-1])
     markdown_path_str = str(destination_directory) + folder_path_str + '/'
@@ -117,16 +118,16 @@ def create_markdown(input_file, destination_directory=root_directory.joinpath('r
         if pathlib.Path(all_img_path).is_dir():
             img_files = [i.name for i in all_img_path.glob('*') if i.is_file() and i.suffix == '.png']
         else:
-            img_files = [f, ]
+            img_files = []
     else:
         img_files = []
 
-    img_files.sort(key = lambda x: int(re.split('(\d.*)', x.split('_')[-1].split('.png')[0])[1]))
+    img_files.sort(key=lambda x: int(re.split('(\d.*)', x.split('_')[-1].split('.png')[0])[1]))
 
     sorted_files = []
     # get all tables
     for img in img_files:
-        if 'table' in img: # get all tables
+        if 'table' in img:
             sorted_files.append(img)
     for img in img_files:
         if 'figure' in img and re.split('(\d.*)', img.split('_')[-1].split('.png')[0])[0] == '':
@@ -146,11 +147,12 @@ def create_markdown(input_file, destination_directory=root_directory.joinpath('r
         if 'table' in png:
             line = '![table ' + str(idx) + '](images/' + png + ')'
             md_file.write(line + '\n')
-        if 'figure' in png: 
+        if 'figure' in png:
             line = '![figure ' + str(idx) + '](images/' + png + ')'
             md_file.write(line + '\n')
 
     md_file.close()
+
 
 def main(args=None):
     if hasattr(args, 'version') and args.version:
